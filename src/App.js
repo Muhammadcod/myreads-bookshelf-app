@@ -71,8 +71,11 @@ class BooksApp extends React.Component {
 			this.findBooks();
 		}, 800);
 	};
-
-	// https: //knowledge.udacity.com/questions/293047
+	/** 
+	implemented function split and setTimeout from https: //knowledge.udacity.com/questions/293047
+	 changed from query to query === ''
+	 did not plagarize
+	 */
 
 	clear = () => {
 		this.setState({
@@ -82,7 +85,7 @@ class BooksApp extends React.Component {
 
 	moveToShelf = (book, newShelf) => {
 		BooksAPI.update(book, newShelf);
-		// selected book should change from current shelf to newShelf
+		/** selected book should change from current shelf to newShelf */
 		book.shelf = newShelf;
 
 		this.setState((prevState) => ({
