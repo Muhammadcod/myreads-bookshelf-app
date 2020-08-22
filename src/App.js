@@ -14,16 +14,21 @@ class BooksApp extends React.Component {
 	state = {
 		library: [],
 		newBooks: [],
-
+		errorMessage: false,
+		message: "",
 		query: "",
 	};
 
 	componentDidMount() {
-		BooksAPI.getAll().then((books) => {
-			this.setState(() => ({
-				library: books,
-			}));
-		});
+		BooksAPI.getAll()
+			.then((books) => {
+				this.setState(() => ({
+					library: books,
+				}));
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	}
 
 	findBooks = () => {
@@ -33,16 +38,27 @@ class BooksApp extends React.Component {
 		query === ""
 			? this.setState(() => ({
 					newBooks: [],
+					errorMessage: false,
+					message: "",
 			  }))
-			: BooksAPI.search(query).then((result) => {
-					result && !result.error
-						? this.setState(() => ({
-								newBooks: result,
-						  }))
-						: this.setState(() => ({
-								newBooks: [],
-						  }));
-			  });
+			: BooksAPI.search(query)
+					.then((result) => {
+						result && !result.error
+							? this.setState(() => ({
+									newBooks: result,
+									errorMessage: false,
+							  }))
+							: this.setState(() => ({
+									newBooks: [],
+									errorMessage: true,
+							  }));
+					})
+					.catch((error) => {
+						this.setState({
+							message:
+								"Failed to fetch results. Please check network",
+						});
+					});
 	};
 
 	handleUpdate = (query) => {
@@ -77,8 +93,8 @@ class BooksApp extends React.Component {
 	};
 
 	render() {
-		const { library, newBooks } = this.state;
-
+		const { library, newBooks, errorMessage, message } = this.state;
+		console.log("error message", errorMessage);
 		return (
 			<div className="app">
 				<Route
@@ -101,6 +117,8 @@ class BooksApp extends React.Component {
 							onSearch={this.handleUpdate}
 							clear={this.clear}
 							shelves={shelves}
+							errorMessage={errorMessage}
+							message={message}
 						/>
 					)}
 				/>
