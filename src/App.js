@@ -64,6 +64,18 @@ class BooksApp extends React.Component {
 		});
 	};
 
+	moveToShelf = (book, newShelf) => {
+		BooksAPI.update(book, newShelf);
+		// selected book should change from current shelf to newShelf
+		book.shelf = newShelf;
+
+		this.setState((prevState) => ({
+			library: prevState.library
+				.filter((li) => li.id !== book.id)
+				.concat([book]),
+		}));
+	};
+
 	render() {
 		const { library, newBooks } = this.state;
 
@@ -73,7 +85,11 @@ class BooksApp extends React.Component {
 					exact
 					path="/"
 					render={() => (
-						<HomePage shelves={shelves} books={library} />
+						<HomePage
+							shelves={shelves}
+							books={library}
+							moveToShelf={this.moveToShelf}
+						/>
 					)}
 				/>
 				<Route
@@ -81,6 +97,7 @@ class BooksApp extends React.Component {
 					render={() => (
 						<SearchPage
 							newBooks={newBooks}
+							moveToShelf={this.moveToShelf}
 							onSearch={this.handleUpdate}
 							clear={this.clear}
 							shelves={shelves}
